@@ -42,7 +42,7 @@ class ScrewController < UIViewController
   end
     
   # Return the weather from Yahoo
-  def get_yahoo_weather(lat, lng)
+  def get_yahoo_weather(lat, lng, &block)
     url = "http://where.yahooapis.com/geocode?q=#{lat},#{lng}&gflags=R"
     BubbleWrap::HTTP.get(url) do |response|
       if response.ok?
@@ -51,7 +51,7 @@ class ScrewController < UIViewController
         BubbleWrap::HTTP.get(url) do |response|
           if response.ok?
             status_code = response.body.to_s[/code="(\d+)"/,1]
-            yield convert_yahoo_code(status_code)
+            block.call convert_yahoo_code(status_code)
           else
             puts response.error_message
           end
